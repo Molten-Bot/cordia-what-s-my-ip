@@ -28,6 +28,17 @@
               Your browser reports current public IP details from a live lookup.
             </p>
           </div>
+
+          <section class="ip-panel" aria-label="Current IP result">
+            <div class="panel-header">
+              <span class="status-dot" aria-hidden="true"></span>
+              <span id="status-text" role="status">Checking current public IP</span>
+            </div>
+            <output class="ip-address" id="hero-ip-address">Checking...</output>
+            <p class="error-panel" id="error-panel" hidden>
+              Lookup failed. Check your connection and try again.
+            </p>
+          </section>
         </section>
 
         <section class="details-grid" id="details" aria-labelledby="details-title">

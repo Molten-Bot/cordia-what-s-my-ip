@@ -35,9 +35,12 @@ interface AppElements {
   cityRegion: HTMLElement;
   coordinates: HTMLElement;
   country: HTMLElement;
+  errorPanel: HTMLElement;
+  heroIpAddress: HTMLElement;
   ipAddress: HTMLElement;
   network: HTMLElement;
   org: HTMLElement;
+  statusText: HTMLElement;
   timezone: HTMLElement;
 }
 
@@ -135,15 +138,30 @@ function getElements(): AppElements {
     cityRegion: getElement("#city-region", HTMLElement),
     coordinates: getElement("#coordinates", HTMLElement),
     country: getElement("#country", HTMLElement),
+    errorPanel: getElement("#error-panel", HTMLElement),
+    heroIpAddress: getElement("#hero-ip-address", HTMLElement),
     ipAddress: getElement("#ip-address", HTMLElement),
     network: getElement("#network", HTMLElement),
     org: getElement("#org", HTMLElement),
+    statusText: getElement("#status-text", HTMLElement),
     timezone: getElement("#timezone", HTMLElement),
   };
 }
 
 function setText(element: HTMLElement, value: string) {
   element.textContent = value;
+}
+
+function fitIpAddress(element: HTMLElement) {
+  element.style.removeProperty("--ip-font-size");
+
+  const startingSize = Number.parseFloat(window.getComputedStyle(element).fontSize);
+  let size = startingSize;
+
+  while (element.scrollWidth > element.clientWidth && size > 12) {
+    size -= 1;
+    element.style.setProperty("--ip-font-size", `${size}px`);
+  }
 }
 
 async function fetchIpInfo(): Promise<IpInfo> {
@@ -179,7 +197,22 @@ function initializeApp() {
 
   function render() {
     const info = state.info;
-    setText(elements.ipAddress, info?.ip ?? (state.status === "loading" ? "Checking..." : "Unknown"));
+    const ipAddress = info?.ip ?? (state.status === "loading" ? "Checking..." : "Unknown");
+
+    elements.errorPanel.hidden = state.status !== "error";
+    if (state.status === "loading") {
+      elements.statusText.textContent = "Checking current public IP";
+    } else if (state.status === "ready") {
+      elements.statusText.textContent = "Current public IP found";
+    } else if (state.status === "error") {
+      elements.statusText.textContent = state.error ?? "IP lookup unavailable";
+    } else {
+      elements.statusText.textContent = "Ready to check current public IP";
+    }
+
+    setText(elements.heroIpAddress, ipAddress);
+    setText(elements.ipAddress, ipAddress);
+    elements.heroIpAddress.dataset.ipVersion = info?.version ?? "Unknown";
     setText(elements.cityRegion, info ? formatLocation(info) : "Unknown");
     setText(elements.country, info?.country ?? "Unknown");
     setText(elements.timezone, info?.timezone ?? "Unknown");
@@ -188,6 +221,7 @@ function initializeApp() {
     setText(elements.network, info?.network ?? "Unknown");
     setText(elements.coordinates, info ? formatCoordinates(info) : "Unknown");
     setText(elements.checkedAt, state.checkedAt ?? "Not checked yet");
+    fitIpAddress(elements.heroIpAddress);
   }
 
   async function refreshIpInfo() {
