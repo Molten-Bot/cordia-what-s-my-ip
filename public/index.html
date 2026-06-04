@@ -19,17 +19,6 @@
     <a class="skip-link" href="#main">Skip to content</a>
 
     <div class="app-shell">
-      <header class="topbar">
-        <a class="brand" href="#current" aria-label="What's my IP? home">
-          <span class="brand-mark" aria-hidden="true">IP</span>
-          <span>What's my IP?</span>
-        </a>
-        <nav class="nav" aria-label="Primary">
-          <a href="#current" aria-current="page">Current IP</a>
-          <a href="#details">Details</a>
-        </nav>
-      </header>
-
       <main id="main">
         <section class="hero" id="current" aria-labelledby="hero-title">
           <div class="hero-copy">
@@ -39,35 +28,6 @@
               Your browser reports current public IP details from a live lookup.
             </p>
           </div>
-
-          <section class="ip-panel" aria-label="Current IP result">
-            <div class="panel-header">
-              <span class="status-dot" aria-hidden="true"></span>
-              <span id="status-text" role="status">Ready to check current public IP</span>
-            </div>
-            <output class="ip-address" id="ip-address">Checking...</output>
-            <div class="ip-actions">
-              <span class="pill" id="ip-version">Unknown</span>
-              <button class="button" id="refresh-ip" type="button">Refresh</button>
-            </div>
-            <div class="panel-map" aria-label="Approximate location">
-              <span class="panel-map-title">Approximate location</span>
-              <div
-                class="location-map"
-                id="location-map"
-                role="img"
-                aria-label="Approximate IP location map"
-                hidden
-              >
-                <span class="map-marker" aria-hidden="true"></span>
-                <span class="map-label" id="map-label">Unknown</span>
-              </div>
-              <span class="map-placeholder" id="map-placeholder">Waiting for coordinates</span>
-            </div>
-            <p class="error-panel" id="error-panel" hidden>
-              Lookup failed. Check your connection and try again.
-            </p>
-          </section>
         </section>
 
         <section class="details-grid" id="details" aria-labelledby="details-title">
@@ -77,6 +37,10 @@
           </div>
 
           <dl class="detail-list">
+            <div class="detail-card detail-card--primary">
+              <dt>Public IP address</dt>
+              <dd id="ip-address">Checking...</dd>
+            </div>
             <div>
               <dt>City / region</dt>
               <dd id="city-region">Unknown</dd>
@@ -119,7 +83,6 @@
 
       <footer class="site-footer">
         <span>Created by <a href="https://cordia.molten.bot">cordia.molten.bot</a>.</span>
-        <a href="/release.json">release 0</a>
       </footer>
     </div>
   </body>
