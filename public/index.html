@@ -20,37 +20,20 @@
 
     <div class="app-shell">
       <main id="main">
-        <section class="hero" id="current" aria-labelledby="hero-title">
-          <div class="hero-copy">
-            <p class="eyebrow">Public address</p>
-            <h1 id="hero-title">What's my IP?</h1>
-            <p class="lede">
-              Your browser reports current public IP details from a live lookup.
-            </p>
-          </div>
-
-          <section class="ip-panel" aria-label="Current IP result">
-            <div class="panel-header">
-              <span class="status-dot" aria-hidden="true"></span>
-              <span id="status-text" role="status">Checking current public IP</span>
-            </div>
-            <output class="ip-address" id="hero-ip-address">Checking...</output>
-            <p class="error-panel" id="error-panel" hidden>
-              Lookup failed. Check your connection and try again.
-            </p>
-          </section>
-        </section>
-
         <section class="details-grid" id="details" aria-labelledby="details-title">
           <div class="section-heading">
             <p class="eyebrow">Lookup details</p>
             <h2 id="details-title">Simple IP information</h2>
+            <p class="status-text" id="status-text" role="status">Checking current public IP</p>
+            <p class="error-panel" id="error-panel" hidden>
+              Lookup failed. Check your connection and try again.
+            </p>
           </div>
 
           <dl class="detail-list">
             <div class="detail-card detail-card--primary">
               <dt>Public IP address</dt>
-              <dd id="ip-address">Checking...</dd>
+              <dd class="ip-address" id="ip-address">Checking...</dd>
             </div>
             <div>
               <dt>City / region</dt>

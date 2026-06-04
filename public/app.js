@@ -81,7 +81,6 @@ function getElements() {
         coordinates: getElement("#coordinates", HTMLElement),
         country: getElement("#country", HTMLElement),
         errorPanel: getElement("#error-panel", HTMLElement),
-        heroIpAddress: getElement("#hero-ip-address", HTMLElement),
         ipAddress: getElement("#ip-address", HTMLElement),
         network: getElement("#network", HTMLElement),
         org: getElement("#org", HTMLElement),
@@ -143,9 +142,8 @@ function initializeApp() {
         else {
             elements.statusText.textContent = "Ready to check current public IP";
         }
-        setText(elements.heroIpAddress, ipAddress);
         setText(elements.ipAddress, ipAddress);
-        elements.heroIpAddress.dataset.ipVersion = info?.version ?? "Unknown";
+        elements.ipAddress.dataset.ipVersion = info?.version ?? "Unknown";
         setText(elements.cityRegion, info ? formatLocation(info) : "Unknown");
         setText(elements.country, info?.country ?? "Unknown");
         setText(elements.timezone, info?.timezone ?? "Unknown");
@@ -154,7 +152,7 @@ function initializeApp() {
         setText(elements.network, info?.network ?? "Unknown");
         setText(elements.coordinates, info ? formatCoordinates(info) : "Unknown");
         setText(elements.checkedAt, state.checkedAt ?? "Not checked yet");
-        fitIpAddress(elements.heroIpAddress);
+        fitIpAddress(elements.ipAddress);
     }
     async function refreshIpInfo() {
         state = { ...state, status: "loading", error: null };
