@@ -1,0 +1,66 @@
+openapi: 3.1.0
+info:
+  title: Cordia Public IP API
+  version: 1.0.0
+  description: Public contract for API consumers using the /api/v1 endpoints.
+  license:
+    name: MIT
+    identifier: MIT
+servers:
+  - url: /
+    description: Same-origin deployment
+security: []
+tags:
+  - name: IP
+    description: Public IP lookup endpoints
+paths:
+  /api/v1/get:
+    get:
+      tags:
+        - IP
+      summary: Get the caller public IP address
+      description: Returns the public IP address detected for the current request.
+      operationId: getCallerIp
+      responses:
+        "200":
+          description: Caller IP address response.
+          headers:
+            Cache-Control:
+              description: Response caching policy. This endpoint is not cacheable.
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IpResponse"
+              examples:
+                ipv4:
+                  summary: IPv4 caller
+                  value:
+                    ip: 203.0.113.10
+                ipv6:
+                  summary: IPv6 caller
+                  value:
+                    ip: 2001:db8::1
+                unknown:
+                  summary: Caller IP unavailable
+                  value:
+                    ip: Unknown
+        "4XX":
+          description: Client error response generated before the endpoint handler is reached.
+components:
+  schemas:
+    IpResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - ip
+      properties:
+        ip:
+          type: string
+          description: Public IP address detected from edge request headers, or Unknown when unavailable.
+          examples:
+            - 203.0.113.10
+            - 2001:db8::1
+            - Unknown
