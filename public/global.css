@@ -96,8 +96,6 @@ a {
   padding: 1rem;
 }
 
-.hero,
-.panel-header,
 .site-footer {
   display: flex;
 }
@@ -111,23 +109,6 @@ main {
   margin: 0 auto;
 }
 
-.hero {
-  align-items: stretch;
-  justify-content: space-between;
-  gap: clamp(1rem, 4vw, 3rem);
-  min-height: clamp(24rem, calc(100svh - 16rem), 42rem);
-  padding: clamp(1.25rem, 5vw, 3.2rem);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-
-.hero-copy {
-  align-self: center;
-  max-width: 720px;
-}
-
 .eyebrow {
   margin: 0 0 0.45rem;
   color: var(--accent);
@@ -137,22 +118,14 @@ main {
   text-transform: uppercase;
 }
 
-h1,
 h2,
 p {
   margin-top: 0;
 }
 
-h1,
 h2 {
   line-height: 1.03;
   letter-spacing: 0;
-}
-
-h1 {
-  max-width: 11ch;
-  margin-bottom: 1rem;
-  font-size: clamp(3rem, 10vw, 7rem);
 }
 
 h2 {
@@ -160,39 +133,11 @@ h2 {
   font-size: clamp(1.5rem, 4vw, 2.4rem);
 }
 
-.lede {
-  max-width: 46ch;
+.status-text {
   margin-bottom: 0;
-  color: var(--muted);
-  font-size: 1.12rem;
-  line-height: 1.6;
-}
-
-.ip-panel {
-  display: grid;
-  align-self: flex-end;
-  width: min(100%, 34rem);
-  gap: 1rem;
-  padding: 1.1rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface-muted);
-}
-
-.panel-header {
-  align-items: center;
-  gap: 0.5rem;
   color: var(--muted);
   font-size: 0.95rem;
   font-weight: 750;
-}
-
-.status-dot {
-  flex: 0 0 auto;
-  width: 0.65rem;
-  height: 0.65rem;
-  border-radius: 999px;
-  background: var(--good);
 }
 
 .ip-address {
@@ -307,14 +252,6 @@ a:focus-visible {
 }
 
 @media (max-width: 880px) {
-  .hero {
-    flex-direction: column;
-  }
-
-  .ip-panel {
-    align-self: stretch;
-  }
-
   .detail-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -324,30 +261,11 @@ a:focus-visible {
   .detail-list {
     grid-template-columns: 1fr;
   }
-
-  .hero {
-    min-height: auto;
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: clamp(2.6rem, 18vw, 4.5rem);
-  }
-
 }
 
 @media (max-height: 520px) {
   .app-shell {
     padding: 0.75rem;
-  }
-
-  .hero {
-    min-height: 0;
-    padding: 0.75rem;
-  }
-
-  .hero-copy {
-    display: none;
   }
 
   .details-grid {
