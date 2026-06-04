@@ -122,12 +122,23 @@ test("served files do not reference disallowed providers or tooling", async () =
     "public/humans.txt",
     "public/index.html",
     "public/llm.txt",
+    "public/openapi.md",
+    "public/openapi.yml",
   ];
 
   for (const file of servedFiles) {
     const content = await readFile(file, "utf8");
     assert.doesNotMatch(content, /\bgit\b|cloudflare/i, file);
   }
+});
+
+test("OpenAPI consumer specs are served from public output", async () => {
+  const spec = await readFile("public/openapi.yml", "utf8");
+  const docs = await readFile("public/openapi.md", "utf8");
+
+  assert.match(spec, /^openapi: 3\.1\.0/m);
+  assert.match(spec, /\/api\/v1\/get:/);
+  assert.match(docs, /\[`openapi\.yml`\]\(\.\/openapi\.yml\)/);
 });
 
 test("served page keeps a visible public IP address field", async () => {
