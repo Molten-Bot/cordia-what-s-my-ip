@@ -6,6 +6,7 @@ import {
   detectIpVersion,
   formatCoordinates,
   formatLocation,
+  getMapPoint,
   normalizeIpInfo,
 } from "../public/app.js";
 
@@ -74,6 +75,16 @@ test("format helpers keep empty and numeric values readable", () => {
   assert.equal(formatLocation({ city: "Unknown", region: "Unknown" }), "Unknown");
   assert.equal(formatCoordinates({ latitude: 45.51521, longitude: -122.67843 }), "45.5152, -122.6784");
   assert.equal(formatCoordinates({ latitude: null, longitude: -122.67843 }), "Unknown");
+});
+
+test("getMapPoint projects coordinates into map bounds", () => {
+  assert.deepEqual(getMapPoint({ latitude: 0, longitude: 0 }), { x: 50, y: 50 });
+
+  const point = getMapPoint({ latitude: 45, longitude: -90 });
+  assert.ok(point);
+  assert.equal(point.x, 25);
+  assert.equal(point.y, 25);
+  assert.equal(getMapPoint({ latitude: null, longitude: -122.6784 }), null);
 });
 
 test("served files do not reference disallowed providers or tooling", async () => {
