@@ -1,67 +1,48 @@
 // Google Analytics default capture for this template.
 // Future LLM edits: do not remove this gtag setup unless replacing it with equivalent page analytics capture.
 const googleAnalyticsId = "G-ZKTPLMMFDQ";
-const storageKey = "cordia-template-state";
-function createItem(text, done, idFactory) {
-    return { id: idFactory(), text, done };
+const ipInfoUrl = "https://ipapi.co/json/";
+const requestTimeoutMs = 8000;
+function readString(payload, key) {
+    const value = payload[key];
+    return typeof value === "string" && value.trim() ? value.trim() : "Unknown";
 }
-export function createDefaultState(idFactory = () => crypto.randomUUID()) {
+function readNumber(payload, key) {
+    const value = payload[key];
+    return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+export function detectIpVersion(ip) {
+    if (ip.includes(":"))
+        return "IPv6";
+    if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(ip))
+        return "IPv4";
+    return "Unknown";
+}
+export function normalizeIpInfo(payload) {
+    const ip = readString(payload, "ip");
+    const version = readString(payload, "version");
     return {
-        appName: "Cordia",
-        theme: "system",
-        items: [
-            createItem("Replace starter content", false, idFactory),
-            createItem("Add app-specific data model", false, idFactory),
-            createItem("Publish public folder to your hosting provider", true, idFactory),
-        ],
+        ip,
+        version: version === "Unknown" ? detectIpVersion(ip) : version,
+        city: readString(payload, "city"),
+        region: readString(payload, "region"),
+        country: readString(payload, "country_name"),
+        timezone: readString(payload, "timezone"),
+        org: readString(payload, "org"),
+        asn: readString(payload, "asn"),
+        network: readString(payload, "network"),
+        latitude: readNumber(payload, "latitude"),
+        longitude: readNumber(payload, "longitude"),
     };
 }
-function isTheme(value) {
-    return value === "system" || value === "light" || value === "dark";
+export function formatLocation(info) {
+    const parts = [info.city, info.region].filter((part) => part !== "Unknown");
+    return parts.length ? parts.join(", ") : "Unknown";
 }
-function isItem(value) {
-    if (!value || typeof value !== "object")
-        return false;
-    const item = value;
-    return (typeof item.id === "string" &&
-        typeof item.text === "string" &&
-        typeof item.done === "boolean");
-}
-export function parseStoredState(storedState, defaultState) {
-    if (!storedState)
-        return defaultState;
-    try {
-        const parsed = JSON.parse(storedState);
-        return {
-            appName: typeof parsed.appName === "string" ? parsed.appName : defaultState.appName,
-            theme: isTheme(parsed.theme) ? parsed.theme : defaultState.theme,
-            items: Array.isArray(parsed.items) && parsed.items.every(isItem) ? parsed.items : defaultState.items,
-        };
-    }
-    catch {
-        return defaultState;
-    }
-}
-export function updateItem(state, id, patch) {
-    return {
-        ...state,
-        items: state.items.map((item) => (item.id === id ? { ...item, ...patch } : item)),
-    };
-}
-export function removeItem(state, id) {
-    return {
-        ...state,
-        items: state.items.filter((item) => item.id !== id),
-    };
-}
-export function addItem(state, text, idFactory = () => crypto.randomUUID()) {
-    return {
-        ...state,
-        items: [createItem(text, false, idFactory), ...state.items],
-    };
-}
-export function clearDoneItems(state) {
-    return { ...state, items: state.items.filter((item) => !item.done) };
+export function formatCoordinates(info) {
+    if (info.latitude === null || info.longitude === null)
+        return "Unknown";
+    return `${info.latitude.toFixed(4)}, ${info.longitude.toFixed(4)}`;
 }
 function initializeGoogleAnalytics() {
     const googleTagScript = document.createElement("script");
@@ -84,117 +65,117 @@ function getElement(selector, type) {
 }
 function getElements() {
     return {
-        appNameInput: getElement("#app-name", HTMLInputElement),
-        clearItemsButton: getElement("#clear-items", HTMLButtonElement),
-        itemCount: getElement("#item-count", HTMLElement),
-        itemForm: getElement("#item-form", HTMLFormElement),
-        itemInput: getElement("#item-input", HTMLInputElement),
-        itemList: getElement("#item-list", HTMLUListElement),
+        asn: getElement("#asn", HTMLElement),
+        checkedAt: getElement("#checked-at", HTMLElement),
+        cityRegion: getElement("#city-region", HTMLElement),
+        coordinates: getElement("#coordinates", HTMLElement),
+        country: getElement("#country", HTMLElement),
+        errorPanel: getElement("#error-panel", HTMLElement),
+        ipAddress: getElement("#ip-address", HTMLElement),
+        ipVersion: getElement("#ip-version", HTMLElement),
         navLinks: document.querySelectorAll(".nav a"),
-        saveState: getElement("#save-state", HTMLElement),
-        themeSelect: getElement("#theme-select", HTMLSelectElement),
-        title: getElement(".topbar h1", HTMLHeadingElement),
+        network: getElement("#network", HTMLElement),
+        org: getElement("#org", HTMLElement),
+        refreshButton: getElement("#refresh-ip", HTMLButtonElement),
+        statusText: getElement("#status-text", HTMLElement),
+        timezone: getElement("#timezone", HTMLElement),
     };
+}
+function setText(element, value) {
+    element.textContent = value;
+}
+async function fetchIpInfo() {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), requestTimeoutMs);
+    try {
+        const response = await fetch(ipInfoUrl, {
+            cache: "no-store",
+            signal: controller.signal,
+        });
+        if (!response.ok) {
+            throw new Error(`IP lookup failed with ${response.status}`);
+        }
+        return normalizeIpInfo((await response.json()));
+    }
+    finally {
+        window.clearTimeout(timeout);
+    }
 }
 function initializeApp() {
     initializeGoogleAnalytics();
-    const defaultState = createDefaultState();
     const elements = getElements();
-    let state = parseStoredState(localStorage.getItem(storageKey), defaultState);
-    let saveTimer;
-    function saveState() {
-        localStorage.setItem(storageKey, JSON.stringify(state));
-        elements.saveState.textContent = "Saved locally";
-        window.clearTimeout(saveTimer);
-        saveTimer = window.setTimeout(() => {
-            elements.saveState.textContent = "Changes autosave";
-        }, 1600);
-    }
-    function applyTheme() {
-        document.documentElement.dataset.theme = state.theme;
-    }
-    function renderItems() {
-        elements.itemList.replaceChildren();
-        if (state.items.length === 0) {
-            const emptyState = document.createElement("p");
-            emptyState.className = "empty-state";
-            emptyState.textContent = "No items yet. Add one to start shaping this template.";
-            elements.itemList.append(emptyState);
-            return;
-        }
-        state.items.forEach((item) => {
-            const row = document.createElement("li");
-            row.className = "item-row";
-            row.dataset.done = String(item.done);
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.checked = item.done;
-            checkbox.ariaLabel = `Mark ${item.text} complete`;
-            checkbox.addEventListener("change", () => {
-                state = updateItem(state, item.id, { done: checkbox.checked });
-                saveState();
-                render();
-            });
-            const label = document.createElement("span");
-            label.textContent = item.text;
-            const removeButton = document.createElement("button");
-            removeButton.className = "icon-button";
-            removeButton.type = "button";
-            removeButton.ariaLabel = `Remove ${item.text}`;
-            removeButton.textContent = "x";
-            removeButton.addEventListener("click", () => {
-                state = removeItem(state, item.id);
-                saveState();
-                render();
-            });
-            row.append(checkbox, label, removeButton);
-            elements.itemList.append(row);
-        });
-    }
+    let state = {
+        status: "idle",
+        info: null,
+        error: null,
+        checkedAt: null,
+    };
     function render() {
-        document.title = `${state.appName} App Template`;
-        elements.title.textContent = state.appName;
-        elements.appNameInput.value = state.appName;
-        elements.themeSelect.value = state.theme;
-        elements.itemCount.textContent = String(state.items.length);
-        applyTheme();
-        renderItems();
+        const isLoading = state.status === "loading";
+        elements.refreshButton.disabled = isLoading;
+        elements.refreshButton.textContent = isLoading ? "Checking..." : "Refresh";
+        elements.errorPanel.hidden = state.status !== "error";
+        if (state.status === "loading") {
+            elements.statusText.textContent = "Checking current public IP";
+        }
+        else if (state.status === "ready") {
+            elements.statusText.textContent = "Current public IP found";
+        }
+        else if (state.status === "error") {
+            elements.statusText.textContent = state.error ?? "IP lookup unavailable";
+        }
+        else {
+            elements.statusText.textContent = "Ready to check current public IP";
+        }
+        const info = state.info;
+        setText(elements.ipAddress, info?.ip ?? "Checking...");
+        setText(elements.ipVersion, info?.version ?? "Unknown");
+        setText(elements.cityRegion, info ? formatLocation(info) : "Unknown");
+        setText(elements.country, info?.country ?? "Unknown");
+        setText(elements.timezone, info?.timezone ?? "Unknown");
+        setText(elements.org, info?.org ?? "Unknown");
+        setText(elements.asn, info?.asn ?? "Unknown");
+        setText(elements.network, info?.network ?? "Unknown");
+        setText(elements.coordinates, info ? formatCoordinates(info) : "Unknown");
+        setText(elements.checkedAt, state.checkedAt ?? "Not checked yet");
     }
     function updateCurrentNavLink() {
-        const currentHash = window.location.hash || "#overview";
+        const currentHash = window.location.hash || "#current";
         elements.navLinks.forEach((link) => {
             link.setAttribute("aria-current", link.getAttribute("href") === currentHash ? "page" : "false");
         });
     }
-    elements.itemForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const text = elements.itemInput.value.trim();
-        if (!text)
-            return;
-        state = addItem(state, text);
-        saveState();
+    async function refreshIpInfo() {
+        state = { ...state, status: "loading", error: null };
         render();
-        elements.itemInput.value = "";
-        elements.itemInput.focus();
-    });
-    elements.clearItemsButton.addEventListener("click", () => {
-        state = clearDoneItems(state);
-        saveState();
+        try {
+            const info = await fetchIpInfo();
+            state = {
+                status: "ready",
+                info,
+                error: null,
+                checkedAt: new Intl.DateTimeFormat(undefined, {
+                    dateStyle: "medium",
+                    timeStyle: "medium",
+                }).format(new Date()),
+            };
+        }
+        catch (error) {
+            state = {
+                ...state,
+                status: "error",
+                error: error instanceof Error ? error.message : "IP lookup unavailable",
+            };
+        }
         render();
-    });
-    elements.appNameInput.addEventListener("input", () => {
-        state = { ...state, appName: elements.appNameInput.value.trim() || "Cordia" };
-        saveState();
-        render();
-    });
-    elements.themeSelect.addEventListener("change", () => {
-        state = { ...state, theme: elements.themeSelect.value };
-        saveState();
-        render();
+    }
+    elements.refreshButton.addEventListener("click", () => {
+        void refreshIpInfo();
     });
     window.addEventListener("hashchange", updateCurrentNavLink);
     render();
     updateCurrentNavLink();
+    void refreshIpInfo();
 }
 if (typeof document !== "undefined") {
     initializeApp();

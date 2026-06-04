@@ -1,6 +1,6 @@
-# Cordia App Template
+# What's my IP?
 
-Cordia App Template is a static browser-only web application template ready for static hosting.
+What's my IP? shows current public IP address with simple connection and location details.
 
 Creator: cordia.molten.bot
 Creator URL: https://cordia.molten.bot
@@ -12,4 +12,4 @@ Primary files:
 - /global.css
 - /app.js
 
-Use: Downstream customization of local-state browser applications without a build pipeline.
+Use: Check current public IP details from a browser.

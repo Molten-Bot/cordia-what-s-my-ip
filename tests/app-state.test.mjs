@@ -3,66 +3,77 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
-  addItem,
-  clearDoneItems,
-  createDefaultState,
-  parseStoredState,
-  removeItem,
-  updateItem,
+  detectIpVersion,
+  formatCoordinates,
+  formatLocation,
+  normalizeIpInfo,
 } from "../public/app.js";
 
-test("createDefaultState uses supplied id factory", () => {
-  let nextId = 1;
-  const state = createDefaultState(() => `item-${nextId++}`);
+test("detectIpVersion recognizes common public IP shapes", () => {
+  assert.equal(detectIpVersion("203.0.113.10"), "IPv4");
+  assert.equal(detectIpVersion("2001:db8::1"), "IPv6");
+  assert.equal(detectIpVersion("not an ip"), "Unknown");
+});
 
+test("normalizeIpInfo reads complete lookup payload", () => {
   assert.deepEqual(
-    state.items.map((item) => item.id),
-    ["item-1", "item-2", "item-3"],
+    normalizeIpInfo({
+      ip: "203.0.113.10",
+      version: "IPv4",
+      city: "Portland",
+      region: "Oregon",
+      country_name: "United States",
+      timezone: "America/Los_Angeles",
+      org: "Example Net",
+      asn: "AS64500",
+      network: "203.0.113.0/24",
+      latitude: 45.5152,
+      longitude: -122.6784,
+    }),
+    {
+      ip: "203.0.113.10",
+      version: "IPv4",
+      city: "Portland",
+      region: "Oregon",
+      country: "United States",
+      timezone: "America/Los_Angeles",
+      org: "Example Net",
+      asn: "AS64500",
+      network: "203.0.113.0/24",
+      latitude: 45.5152,
+      longitude: -122.6784,
+    },
   );
 });
 
-test("parseStoredState merges valid stored values with defaults", () => {
-  const defaultState = createDefaultState(() => "default-id");
-  const stored = JSON.stringify({
-    appName: "Typed Cordia",
-    theme: "dark",
-    items: [{ id: "stored-id", text: "Stored item", done: true }],
-  });
-
-  assert.deepEqual(parseStoredState(stored, defaultState), {
-    appName: "Typed Cordia",
-    theme: "dark",
-    items: [{ id: "stored-id", text: "Stored item", done: true }],
-  });
-});
-
-test("parseStoredState falls back when stored JSON is invalid", () => {
-  const defaultState = createDefaultState(() => "default-id");
-
-  assert.equal(parseStoredState("{", defaultState), defaultState);
-});
-
-test("item reducers add, update, remove, and clear items immutably", () => {
-  const state = {
-    appName: "Cordia",
-    theme: "system",
-    items: [
-      { id: "one", text: "One", done: false },
-      { id: "two", text: "Two", done: true },
-    ],
-  };
-
-  const added = addItem(state, "Three", () => "three");
-  const updated = updateItem(added, "one", { done: true });
-  const removed = removeItem(updated, "two");
-  const cleared = clearDoneItems(removed);
-
-  assert.deepEqual(added.items[0], { id: "three", text: "Three", done: false });
-  assert.equal(state.items[0].done, false);
+test("normalizeIpInfo falls back to Unknown and infers version", () => {
   assert.deepEqual(
-    cleared.items,
-    [{ id: "three", text: "Three", done: false }],
+    normalizeIpInfo({
+      ip: "2001:db8::1",
+      latitude: "45.0",
+      longitude: Number.NaN,
+    }),
+    {
+      ip: "2001:db8::1",
+      version: "IPv6",
+      city: "Unknown",
+      region: "Unknown",
+      country: "Unknown",
+      timezone: "Unknown",
+      org: "Unknown",
+      asn: "Unknown",
+      network: "Unknown",
+      latitude: null,
+      longitude: null,
+    },
   );
+});
+
+test("format helpers keep empty and numeric values readable", () => {
+  assert.equal(formatLocation({ city: "Portland", region: "Oregon" }), "Portland, Oregon");
+  assert.equal(formatLocation({ city: "Unknown", region: "Unknown" }), "Unknown");
+  assert.equal(formatCoordinates({ latitude: 45.51521, longitude: -122.67843 }), "45.5152, -122.6784");
+  assert.equal(formatCoordinates({ latitude: null, longitude: -122.67843 }), "Unknown");
 });
 
 test("served files do not reference disallowed providers or tooling", async () => {
