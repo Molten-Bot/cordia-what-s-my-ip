@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "generatedBy": "cordia",
+  "updatedAt": "2026-06-04T15:03:30.555Z",
+  "project": {
+    "id": "what-s-my-ip",
+    "handle": "what-s-my-ip",
+    "title": "What's my IP?",
+    "summary": "An app that shows the current IP of the user. With other simple and informative IP information.",
+    "url": "https://cordia.molten.bot/project/what-s-my-ip"
+  },
+  "repo": {
+    "owner": "Molten-Bot",
+    "name": "cordia-what-s-my-ip",
+    "fullName": "Molten-Bot/cordia-what-s-my-ip"
+  }
+}
