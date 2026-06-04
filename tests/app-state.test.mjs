@@ -133,6 +133,7 @@ test("served files do not reference disallowed providers or tooling", async () =
 test("served page keeps a visible public IP address field", async () => {
   const html = await readFile("public/index.html", "utf8");
 
+  assert.match(html, /<output class="ip-address" id="hero-ip-address">Checking\.\.\.<\/output>/);
   assert.match(html, /<dt>Public IP address<\/dt>/);
   assert.match(html, /<dd id="ip-address">Checking\.\.\.<\/dd>/);
 });

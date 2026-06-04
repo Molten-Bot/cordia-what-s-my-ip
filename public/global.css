@@ -97,6 +97,7 @@ a {
 }
 
 .hero,
+.panel-header,
 .site-footer {
   display: flex;
 }
@@ -165,6 +166,61 @@ h2 {
   color: var(--muted);
   font-size: 1.12rem;
   line-height: 1.6;
+}
+
+.ip-panel {
+  display: grid;
+  align-self: flex-end;
+  width: min(100%, 34rem);
+  gap: 1rem;
+  padding: 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+
+.panel-header {
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+
+.status-dot {
+  flex: 0 0 auto;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: var(--good);
+}
+
+.ip-address {
+  display: block;
+  max-width: 100%;
+  min-height: 4.3rem;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: var(--ip-font-size, clamp(1.15rem, 4vw, 3.3rem));
+  font-weight: 850;
+  line-height: 1.08;
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: clip;
+  word-break: keep-all;
+  white-space: nowrap;
+}
+
+.ip-address[data-ip-version="IPv6"] {
+  font-size: var(--ip-font-size, clamp(0.92rem, 3.2vw, 1.75rem));
+}
+
+.error-panel {
+  margin: 0;
+  padding: 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--accent), transparent 45%);
+  border-radius: var(--radius);
+  color: var(--accent);
+  font-weight: 750;
 }
 
 .details-grid {
@@ -253,6 +309,10 @@ a:focus-visible {
 @media (max-width: 880px) {
   .hero {
     flex-direction: column;
+  }
+
+  .ip-panel {
+    align-self: stretch;
   }
 
   .detail-list {
