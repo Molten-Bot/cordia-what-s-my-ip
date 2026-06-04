@@ -162,6 +162,18 @@ function setText(element: HTMLElement, value: string) {
   element.textContent = value;
 }
 
+function fitIpAddress(element: HTMLElement) {
+  element.style.removeProperty("--ip-font-size");
+
+  const startingSize = Number.parseFloat(window.getComputedStyle(element).fontSize);
+  let size = startingSize;
+
+  while (element.scrollWidth > element.clientWidth && size > 12) {
+    size -= 1;
+    element.style.setProperty("--ip-font-size", `${size}px`);
+  }
+}
+
 async function fetchIpInfo(): Promise<IpInfo> {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), requestTimeoutMs);
@@ -211,6 +223,7 @@ function initializeApp() {
 
     const info = state.info;
     setText(elements.ipAddress, info?.ip ?? "Checking...");
+    elements.ipAddress.dataset.ipVersion = info?.version ?? "Unknown";
     setText(elements.ipVersion, info?.version ?? "Unknown");
     setText(elements.cityRegion, info ? formatLocation(info) : "Unknown");
     setText(elements.country, info?.country ?? "Unknown");
@@ -230,6 +243,8 @@ function initializeApp() {
       elements.locationMap.setAttribute("aria-label", `Approximate IP location map at ${formatCoordinates(info)}`);
       setText(elements.mapLabel, formatCoordinates(info));
     }
+
+    fitIpAddress(elements.ipAddress);
   }
 
   function updateCurrentNavLink() {
@@ -269,6 +284,7 @@ function initializeApp() {
     void refreshIpInfo();
   });
   window.addEventListener("hashchange", updateCurrentNavLink);
+  window.addEventListener("resize", () => fitIpAddress(elements.ipAddress));
 
   render();
   updateCurrentNavLink();

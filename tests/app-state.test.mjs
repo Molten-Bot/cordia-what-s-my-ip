@@ -9,6 +9,7 @@ import {
   getMapPoint,
   normalizeIpInfo,
 } from "../public/app.js";
+import { createIpResponse, getCallerIp } from "../functions/api/v1/get.js";
 
 test("detectIpVersion recognizes common public IP shapes", () => {
   assert.equal(detectIpVersion("203.0.113.10"), "IPv4");
@@ -85,6 +86,34 @@ test("getMapPoint projects coordinates into map bounds", () => {
   assert.equal(point.x, 25);
   assert.equal(point.y, 25);
   assert.equal(getMapPoint({ latitude: null, longitude: -122.6784 }), null);
+});
+
+test("getCallerIp prefers edge caller IP headers", () => {
+  const request = new Request("https://example.test/api/v1/get", {
+    headers: {
+      "cf-connecting-ip": "203.0.113.10",
+      "x-forwarded-for": "198.51.100.9, 198.51.100.10",
+    },
+  });
+
+  assert.equal(getCallerIp(request), "203.0.113.10");
+});
+
+test("createIpResponse returns no-store JSON payload", async () => {
+  const response = createIpResponse(
+    new Request("https://example.test/api/v1/get", {
+      headers: {
+        "x-forwarded-for": "198.51.100.9, 198.51.100.10",
+      },
+    }),
+  );
+
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.deepEqual(await response.json(), { ip: "198.51.100.9" });
+});
+
+test("getCallerIp falls back when caller header is absent", () => {
+  assert.equal(getCallerIp(new Request("https://example.test/api/v1/get")), "Unknown");
 });
 
 test("served files do not reference disallowed providers or tooling", async () => {
