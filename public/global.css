@@ -133,6 +133,41 @@ h2 {
   font-size: clamp(1.5rem, 4vw, 2.4rem);
 }
 
+.status-text {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+
+.ip-address {
+  display: block;
+  max-width: 100%;
+  min-height: 4.3rem;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: var(--ip-font-size, clamp(1.15rem, 4vw, 3.3rem));
+  font-weight: 850;
+  line-height: 1.08;
+  overflow: hidden;
+  overflow-wrap: normal;
+  text-overflow: clip;
+  word-break: keep-all;
+  white-space: nowrap;
+}
+
+.ip-address[data-ip-version="IPv6"] {
+  font-size: var(--ip-font-size, clamp(0.92rem, 3.2vw, 1.75rem));
+}
+
+.error-panel {
+  margin: 0;
+  padding: 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--accent), transparent 45%);
+  border-radius: var(--radius);
+  color: var(--accent);
+  font-weight: 750;
+}
+
 .details-grid {
   display: grid;
   gap: 1rem;
