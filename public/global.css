@@ -93,78 +93,12 @@ a {
   flex-direction: column;
   width: 100%;
   margin: 0 auto;
-  padding: 1rem 1rem 3.1rem;
+  padding: 1rem;
 }
 
-.topbar,
-.brand,
-.nav,
 .hero,
-.panel-header,
-.ip-actions,
 .site-footer {
   display: flex;
-}
-
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  width: min(1280px, 100%);
-  min-height: 72px;
-  margin: 0 auto;
-  background: color-mix(in srgb, var(--bg), transparent 8%);
-  backdrop-filter: blur(18px);
-}
-
-.brand {
-  align-items: center;
-  gap: 0.65rem;
-  color: var(--text);
-  font-size: 1.1rem;
-  font-weight: 850;
-  text-decoration: none;
-}
-
-.brand-mark {
-  display: inline-grid;
-  width: 2.25rem;
-  height: 2.25rem;
-  place-items: center;
-  border-radius: var(--radius);
-  background: var(--primary);
-  color: white;
-  font-size: 0.85rem;
-}
-
-.nav {
-  gap: 0.35rem;
-  padding: 0.25rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--surface), transparent 18%);
-}
-
-.nav a {
-  min-width: 6.2rem;
-  padding: 0.55rem 0.75rem;
-  border-radius: calc(var(--radius) - 2px);
-  color: var(--muted);
-  font-size: 0.92rem;
-  font-weight: 750;
-  text-align: center;
-  text-decoration: none;
-}
-
-.nav a:hover,
-.nav a:focus-visible,
-.nav a[aria-current="page"] {
-  background: var(--surface);
-  color: var(--text);
-  outline: none;
 }
 
 main {
@@ -180,7 +114,7 @@ main {
   align-items: stretch;
   justify-content: space-between;
   gap: clamp(1rem, 4vw, 3rem);
-  min-height: clamp(26rem, calc(100svh - 20rem), 38rem);
+  min-height: clamp(24rem, calc(100svh - 16rem), 42rem);
   padding: clamp(1.25rem, 5vw, 3.2rem);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -190,7 +124,7 @@ main {
 
 .hero-copy {
   align-self: center;
-  max-width: 560px;
+  max-width: 720px;
 }
 
 .eyebrow {
@@ -231,103 +165,6 @@ h2 {
   color: var(--muted);
   font-size: 1.12rem;
   line-height: 1.6;
-}
-
-.ip-panel {
-  display: grid;
-  align-self: flex-end;
-  width: min(100%, 34rem);
-  gap: 1rem;
-  padding: 1.1rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface-muted);
-}
-
-.panel-header {
-  align-items: center;
-  grid-area: header;
-  gap: 0.5rem;
-  color: var(--muted);
-  font-size: 0.95rem;
-  font-weight: 750;
-}
-
-.status-dot {
-  flex: 0 0 auto;
-  width: 0.65rem;
-  height: 0.65rem;
-  border-radius: 999px;
-  background: var(--good);
-}
-
-.ip-address {
-  display: block;
-  grid-area: ip;
-  max-width: 100%;
-  min-height: 4.3rem;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: var(--ip-font-size, clamp(1.15rem, 4vw, 3.3rem));
-  font-weight: 850;
-  line-height: 1.08;
-  overflow: hidden;
-  overflow-wrap: normal;
-  text-overflow: clip;
-  word-break: keep-all;
-  white-space: nowrap;
-}
-
-.ip-address[data-ip-version="IPv6"] {
-  font-size: var(--ip-font-size, clamp(0.92rem, 3.2vw, 1.75rem));
-}
-
-.ip-actions {
-  align-items: center;
-  grid-area: actions;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.pill {
-  min-width: 4.5rem;
-  padding: 0.45rem 0.7rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--muted);
-  font-weight: 800;
-  text-align: center;
-}
-
-.button {
-  min-width: 6.5rem;
-  min-height: 2.75rem;
-  padding: 0.7rem 1rem;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
-  background: var(--primary);
-  color: white;
-  font-weight: 850;
-  cursor: pointer;
-}
-
-.button:hover,
-.button:focus-visible {
-  background: var(--primary-strong);
-}
-
-.button:disabled {
-  cursor: wait;
-  opacity: 0.72;
-}
-
-.error-panel {
-  margin: 0;
-  padding: 0.8rem;
-  border: 1px solid color-mix(in srgb, var(--accent), transparent 45%);
-  border-radius: var(--radius);
-  color: var(--accent);
-  font-weight: 750;
 }
 
 .details-grid {
@@ -376,84 +213,6 @@ h2 {
   overflow-wrap: anywhere;
 }
 
-.panel-map {
-  position: relative;
-  display: grid;
-  grid-area: map;
-  gap: 0.45rem;
-  min-height: 7rem;
-}
-
-.panel-map-title {
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 850;
-  text-transform: uppercase;
-}
-
-.location-map {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  width: 100%;
-  height: 8.4rem;
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radius) - 2px);
-  background:
-    radial-gradient(circle at var(--map-x, 50%) var(--map-y, 50%), color-mix(in srgb, var(--accent), transparent 70%) 0 1.1rem, transparent 1.15rem),
-    linear-gradient(30deg, transparent 0 44%, color-mix(in srgb, var(--primary), transparent 72%) 44% 48%, transparent 48%),
-    linear-gradient(145deg, transparent 0 54%, color-mix(in srgb, var(--accent), transparent 78%) 54% 58%, transparent 58%),
-    linear-gradient(110deg, transparent 0 18%, color-mix(in srgb, var(--good), transparent 82%) 18% 30%, transparent 30%),
-    linear-gradient(90deg, color-mix(in srgb, var(--line), transparent 45%) 1px, transparent 1px),
-    linear-gradient(0deg, color-mix(in srgb, var(--line), transparent 45%) 1px, transparent 1px),
-    color-mix(in srgb, var(--surface), var(--primary) 6%);
-  background-size:
-    auto,
-    auto,
-    auto,
-    auto,
-    2.2rem 2.2rem,
-    2.2rem 2.2rem,
-    auto;
-}
-
-.map-marker {
-  position: absolute;
-  left: var(--map-x, 50%);
-  top: var(--map-y, 50%);
-  width: 0.95rem;
-  height: 0.95rem;
-  border: 2px solid white;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 0 0.4rem color-mix(in srgb, var(--accent), transparent 78%);
-  transform: translate(-50%, -50%);
-}
-
-.map-label {
-  position: absolute;
-  right: 0.55rem;
-  bottom: 0.5rem;
-  padding: 0.3rem 0.45rem;
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radius) - 3px);
-  background: color-mix(in srgb, var(--surface), transparent 8%);
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 850;
-}
-
-.map-placeholder {
-  display: grid;
-  min-height: 8.4rem;
-  place-items: center;
-  border: 1px dashed var(--line);
-  border-radius: calc(var(--radius) - 2px);
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-button:focus-visible,
 a:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--primary), transparent 58%);
   outline-offset: 2px;
@@ -486,31 +245,12 @@ a:focus-visible {
     flex-direction: column;
   }
 
-  .ip-panel {
-    width: 100%;
-  }
-
   .detail-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 620px) {
-  .topbar,
-  .ip-actions {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .topbar {
-    position: static;
-  }
-
-  .nav a {
-    flex: 1;
-    min-width: 0;
-  }
-
   .detail-list {
     grid-template-columns: 1fr;
   }
@@ -528,25 +268,7 @@ a:focus-visible {
 
 @media (max-height: 520px) {
   .app-shell {
-    padding: 0.75rem 1rem 2.55rem;
-  }
-
-  .topbar {
-    position: static;
-    min-height: 44px;
-  }
-
-  .nav {
-    display: none;
-  }
-
-  .brand {
-    font-size: 1rem;
-  }
-
-  .brand-mark {
-    width: 2rem;
-    height: 2rem;
+    padding: 0.75rem;
   }
 
   .hero {
@@ -555,48 +277,6 @@ a:focus-visible {
   }
 
   .hero-copy {
-    display: none;
-  }
-
-  .ip-panel {
-    align-self: start;
-    width: 100%;
-    grid-template-areas:
-      "header map"
-      "ip map"
-      "actions map";
-    grid-template-columns: minmax(0, 1fr) minmax(7.5rem, 34%);
-    align-items: stretch;
-    gap: 0.5rem;
-    padding: 0.75rem;
-  }
-
-  .ip-actions {
-    align-items: center;
-    flex-direction: row;
-  }
-
-  .ip-address {
-    min-height: 2.55rem;
-  }
-
-  .button {
-    min-height: 2.15rem;
-    padding: 0.35rem 0.75rem;
-  }
-
-  .pill {
-    padding: 0.28rem 0.55rem;
-  }
-
-  .location-map,
-  .map-placeholder {
-    height: 100%;
-    min-height: 5.9rem;
-  }
-
-  .panel-map-title,
-  .map-label {
     display: none;
   }
 

@@ -80,31 +80,13 @@ function getElements() {
         cityRegion: getElement("#city-region", HTMLElement),
         coordinates: getElement("#coordinates", HTMLElement),
         country: getElement("#country", HTMLElement),
-        errorPanel: getElement("#error-panel", HTMLElement),
-        ipAddress: getElement("#ip-address", HTMLElement),
-        ipVersion: getElement("#ip-version", HTMLElement),
-        locationMap: getElement("#location-map", HTMLElement),
-        mapLabel: getElement("#map-label", HTMLElement),
-        mapPlaceholder: getElement("#map-placeholder", HTMLElement),
-        navLinks: document.querySelectorAll(".nav a"),
         network: getElement("#network", HTMLElement),
         org: getElement("#org", HTMLElement),
-        refreshButton: getElement("#refresh-ip", HTMLButtonElement),
-        statusText: getElement("#status-text", HTMLElement),
         timezone: getElement("#timezone", HTMLElement),
     };
 }
 function setText(element, value) {
     element.textContent = value;
-}
-function fitIpAddress(element) {
-    element.style.removeProperty("--ip-font-size");
-    const startingSize = Number.parseFloat(window.getComputedStyle(element).fontSize);
-    let size = startingSize;
-    while (element.scrollWidth > element.clientWidth && size > 12) {
-        size -= 1;
-        element.style.setProperty("--ip-font-size", `${size}px`);
-    }
 }
 async function fetchIpInfo() {
     const controller = new AbortController();
@@ -133,26 +115,7 @@ function initializeApp() {
         checkedAt: null,
     };
     function render() {
-        const isLoading = state.status === "loading";
-        elements.refreshButton.disabled = isLoading;
-        elements.refreshButton.textContent = isLoading ? "Checking..." : "Refresh";
-        elements.errorPanel.hidden = state.status !== "error";
-        if (state.status === "loading") {
-            elements.statusText.textContent = "Checking current public IP";
-        }
-        else if (state.status === "ready") {
-            elements.statusText.textContent = "Current public IP found";
-        }
-        else if (state.status === "error") {
-            elements.statusText.textContent = state.error ?? "IP lookup unavailable";
-        }
-        else {
-            elements.statusText.textContent = "Ready to check current public IP";
-        }
         const info = state.info;
-        setText(elements.ipAddress, info?.ip ?? "Checking...");
-        elements.ipAddress.dataset.ipVersion = info?.version ?? "Unknown";
-        setText(elements.ipVersion, info?.version ?? "Unknown");
         setText(elements.cityRegion, info ? formatLocation(info) : "Unknown");
         setText(elements.country, info?.country ?? "Unknown");
         setText(elements.timezone, info?.timezone ?? "Unknown");
@@ -161,22 +124,6 @@ function initializeApp() {
         setText(elements.network, info?.network ?? "Unknown");
         setText(elements.coordinates, info ? formatCoordinates(info) : "Unknown");
         setText(elements.checkedAt, state.checkedAt ?? "Not checked yet");
-        const mapPoint = info ? getMapPoint(info) : null;
-        elements.locationMap.hidden = mapPoint === null;
-        elements.mapPlaceholder.hidden = mapPoint !== null;
-        if (mapPoint !== null && info) {
-            elements.locationMap.style.setProperty("--map-x", `${mapPoint.x}%`);
-            elements.locationMap.style.setProperty("--map-y", `${mapPoint.y}%`);
-            elements.locationMap.setAttribute("aria-label", `Approximate IP location map at ${formatCoordinates(info)}`);
-            setText(elements.mapLabel, formatCoordinates(info));
-        }
-        fitIpAddress(elements.ipAddress);
-    }
-    function updateCurrentNavLink() {
-        const currentHash = window.location.hash || "#current";
-        elements.navLinks.forEach((link) => {
-            link.setAttribute("aria-current", link.getAttribute("href") === currentHash ? "page" : "false");
-        });
     }
     async function refreshIpInfo() {
         state = { ...state, status: "loading", error: null };
@@ -202,13 +149,7 @@ function initializeApp() {
         }
         render();
     }
-    elements.refreshButton.addEventListener("click", () => {
-        void refreshIpInfo();
-    });
-    window.addEventListener("hashchange", updateCurrentNavLink);
-    window.addEventListener("resize", () => fitIpAddress(elements.ipAddress));
     render();
-    updateCurrentNavLink();
     void refreshIpInfo();
 }
 if (typeof document !== "undefined") {
