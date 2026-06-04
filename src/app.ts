@@ -35,6 +35,7 @@ interface AppElements {
   cityRegion: HTMLElement;
   coordinates: HTMLElement;
   country: HTMLElement;
+  ipAddress: HTMLElement;
   network: HTMLElement;
   org: HTMLElement;
   timezone: HTMLElement;
@@ -134,6 +135,7 @@ function getElements(): AppElements {
     cityRegion: getElement("#city-region", HTMLElement),
     coordinates: getElement("#coordinates", HTMLElement),
     country: getElement("#country", HTMLElement),
+    ipAddress: getElement("#ip-address", HTMLElement),
     network: getElement("#network", HTMLElement),
     org: getElement("#org", HTMLElement),
     timezone: getElement("#timezone", HTMLElement),
@@ -177,6 +179,7 @@ function initializeApp() {
 
   function render() {
     const info = state.info;
+    setText(elements.ipAddress, info?.ip ?? (state.status === "loading" ? "Checking..." : "Unknown"));
     setText(elements.cityRegion, info ? formatLocation(info) : "Unknown");
     setText(elements.country, info?.country ?? "Unknown");
     setText(elements.timezone, info?.timezone ?? "Unknown");

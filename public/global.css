@@ -213,6 +213,16 @@ h2 {
   overflow-wrap: anywhere;
 }
 
+.detail-card--primary {
+  border-color: color-mix(in srgb, var(--primary), var(--line) 45%);
+  background: color-mix(in srgb, var(--primary), var(--surface) 88%);
+}
+
+.detail-card--primary dd {
+  color: var(--primary-strong);
+  font-size: clamp(1.35rem, 3vw, 2.1rem);
+}
+
 a:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--primary), transparent 58%);
   outline-offset: 2px;
