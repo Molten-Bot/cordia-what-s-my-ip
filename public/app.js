@@ -44,6 +44,16 @@ export function formatCoordinates(info) {
         return "Unknown";
     return `${info.latitude.toFixed(4)}, ${info.longitude.toFixed(4)}`;
 }
+export function getMapPoint(info) {
+    if (info.latitude === null || info.longitude === null)
+        return null;
+    const x = ((info.longitude + 180) / 360) * 100;
+    const y = ((90 - info.latitude) / 180) * 100;
+    return {
+        x: Math.min(100, Math.max(0, x)),
+        y: Math.min(100, Math.max(0, y)),
+    };
+}
 function initializeGoogleAnalytics() {
     const googleTagScript = document.createElement("script");
     googleTagScript.async = true;
@@ -73,6 +83,9 @@ function getElements() {
         errorPanel: getElement("#error-panel", HTMLElement),
         ipAddress: getElement("#ip-address", HTMLElement),
         ipVersion: getElement("#ip-version", HTMLElement),
+        locationMap: getElement("#location-map", HTMLElement),
+        mapLabel: getElement("#map-label", HTMLElement),
+        mapPlaceholder: getElement("#map-placeholder", HTMLElement),
         navLinks: document.querySelectorAll(".nav a"),
         network: getElement("#network", HTMLElement),
         org: getElement("#org", HTMLElement),
@@ -138,6 +151,15 @@ function initializeApp() {
         setText(elements.network, info?.network ?? "Unknown");
         setText(elements.coordinates, info ? formatCoordinates(info) : "Unknown");
         setText(elements.checkedAt, state.checkedAt ?? "Not checked yet");
+        const mapPoint = info ? getMapPoint(info) : null;
+        elements.locationMap.hidden = mapPoint === null;
+        elements.mapPlaceholder.hidden = mapPoint !== null;
+        if (mapPoint !== null && info) {
+            elements.locationMap.style.setProperty("--map-x", `${mapPoint.x}%`);
+            elements.locationMap.style.setProperty("--map-y", `${mapPoint.y}%`);
+            elements.locationMap.setAttribute("aria-label", `Approximate IP location map at ${formatCoordinates(info)}`);
+            setText(elements.mapLabel, formatCoordinates(info));
+        }
     }
     function updateCurrentNavLink() {
         const currentHash = window.location.hash || "#current";
